@@ -1,1 +1,0 @@
-let omega = fun x -> x x

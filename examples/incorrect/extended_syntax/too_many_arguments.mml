@@ -1,3 +1,0 @@
-let add = (+)
-
-let f = add 4 2 3

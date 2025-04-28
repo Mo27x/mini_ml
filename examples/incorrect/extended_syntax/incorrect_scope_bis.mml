@@ -1,5 +1,0 @@
-let f =
-  let g x =
-    x
-  in
-  g x

@@ -1,2 +1,0 @@
-let f = 4
-let rec f = fun x -> (+) f x

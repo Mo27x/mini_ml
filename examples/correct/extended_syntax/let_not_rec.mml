@@ -1,6 +1,0 @@
-let f =
-  4
-let f x =
-  f + x
-let res =
-  f 12

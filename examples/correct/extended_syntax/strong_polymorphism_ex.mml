@@ -1,3 +1,0 @@
-let f x = x
-let a = f 1
-let b = f "coucou"

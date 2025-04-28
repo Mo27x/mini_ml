@@ -11,7 +11,7 @@
 
 > 1. Donnez l'automate LR0 associé à la grammaire ci-dessus (on considèrera
 >    pour cette question que built_in, INT et ID sont un seul terminal (qu'on
->    notera T), car le phéenomène à observer ne les concerne pas vraiment).
+>    notera T), car le phénomène à observer ne les concerne pas vraiment).
 >    Vous pouvez évidemment vous servir de menhir pour vérifier que vous avez le
 >    bon automate. La grammaire simplifiée est donc la suivante (il faut évidemment
 >    ajouter le non-terminal initial technique expr′ pour avoir un résultat
@@ -77,6 +77,16 @@
 > type, et expliquez pourquoi. Vous le placerez dans examples/answers.
 
 ### 4.3 Typage fortement polymorphe
+
+> Illustrez le fonctionnement du typage polymorphe en fournissant deux exemples
+> supplémentaires qui typent différemment avec les deux algorithmes de typage.
+> Choisissez-en un dont vous expliquerez soigneusement où se situe la différence
+> (i.e., décrivez l'application des deux algorithmes à cet exemple). Vous les
+> placerez dans examples/answers.
+
+> Si vous avez des différence entre votre implémentation et le comportement de
+> l'outil qui vous est fourni, décrivez-les, et dites d'où vous pensez qu'elles
+> viennent.
 
 ### 5 Extensions
 

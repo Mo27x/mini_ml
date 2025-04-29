@@ -17,9 +17,18 @@ end
 
 let type_of_built_in (built_in : built_in) =
   match built_in with
-  | Add -> TFunc ([], TInt, TFunc ([], TInt, TInt))
-  (* à modifier après ça*)
-  | _ -> failwith "built_in not yet typed"
+  | Add | Sub | Mul | Div | Mod -> TFunc ([], TInt, TFunc ([], TInt, TInt))
+  | And | Or -> TFunc ([], TBool, TFunc ([], TBool, TBool))
+  | Eq | Neq | Lt | Gt | Leq | Geq ->
+      TFunc ([], TUniv 0, TFunc ([], TUniv 0, TBool))
+  | Concat -> TFunc ([], TString, TFunc ([], TString, TString))
+  | Cat | Append ->
+      TFunc ([], TList ([], TUniv 0), TFunc ([], TUniv 0, TList ([], TUniv 0)))
+  | UMin -> TFunc ([], TInt, TInt)
+  | Not -> TFunc ([], TBool, TBool)
+  | Head -> TFunc ([], TList ([], TUniv 0), TUniv 0)
+  | Tail -> TFunc ([], TList ([], TUniv 0), TList ([], TUniv 0))
+  | Print -> TFunc ([], TList ([], TUniv 0), TUnit)
 
 let rec solve_constraints (constraints : (type_lang * type_lang) list) :
     (int * type_lang) list =

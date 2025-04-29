@@ -51,6 +51,11 @@
 
 ### 4.1 Typage naïf et génération des contraintes
 
+> **WIP**
+> Implémentez la fonction type_of_built_in du fichier typer util.ml (attention à correctement attribuer les types universels génériques).
+
+> Implémentez la fonction type_expr du fichier typer naive.ml.
+
 > Donnez 3 (ou plus) petits programmes mini-ml qui illustrent le fonctionnement
 > de votre typeur naïf (toutes les sous-expressions doivent être représentées).
 > Vous placerez ces programmes dans examples/answers, et expliquerez ce qu'ils

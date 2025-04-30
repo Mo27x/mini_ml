@@ -1,9 +1,64 @@
 open Ast
 open Typer_util
 
+let subenv (env : 'a Util.Environment.t) (added_vals : (string * 'a) list) =
+  let new_env = Util.Environment.copy env in
+  List.iter (fun (id, t) -> Util.Environment.add new_env id t) added_vals;
+  new_env
+
 let rec type_expr (counter : Counter.t) (env : type_lang Util.Environment.t)
     (expr : expr) =
   (* la suite est à modifier -- c’est juste là pour ne pas avoir de warning tant que vous ne travaillez pas dessus.*)
   match expr with
-  | App (e, _, _) -> type_expr counter env e
-  | _ -> failwith "weak typer not implemented"
+  | Cst_i _ -> (TInt, [])
+  | Cst_b _ -> (TBool, [])
+  | Cst_str _ -> (TString, [])
+  | Cst_func (f, _) -> (type_of_built_in f, [])
+  | Nil _ -> (TList ([], TUniv (Counter.get_fresh counter)), [])
+  | Unit _ -> (TUnit, [])
+  | Var (id, _) -> (
+      match Util.Environment.get env id with
+      | Some t -> (t, [])
+      | None -> failwith ("Undefined var id: " ^ id))
+  | IfThenElse (e1, e2, e3, _) ->
+      let t1, constraints1 = type_expr counter env e1
+      and t2, constraints2 = type_expr counter env e2
+      and t3, constraints3 = type_expr counter env e3 in
+      let newContraints =
+        [ (t1, TBool); (t2, t3) ] @ constraints1 @ constraints2 @ constraints3
+      in
+      (t2, newContraints)
+  | App (efunc, earg, _) ->
+      let tfunc, cfunc = type_expr counter env efunc
+      and targ, carg = type_expr counter env earg
+      and tUnivA = TUniv (Counter.get_fresh counter)
+      and tUnivB = TUniv (Counter.get_fresh counter) in
+      let newContraints =
+        [ (tfunc, TFunc ([], tUnivA, tUnivB)); (targ, tUnivB) ] @ cfunc @ carg
+      in
+      (tUnivB, newContraints)
+  | Let (isRec, id, e1, e2, _) ->
+      if isRec then (
+        let tUnivA = TUniv (Counter.get_fresh counter) in
+        let sub_env1 = subenv env [ (id, tUnivA) ] in
+        let t1, constraints1 = type_expr counter sub_env1 e1 in
+        let sub_env2 = subenv env [ (id, t1) ] in
+        let t2, constraints2 = type_expr counter sub_env2 e2 in
+        Util.Environment.remove env id;
+        (t2, [ (tUnivA, t1) ] @ constraints1 @ constraints2))
+      else
+        let t1, constraints1 = type_expr counter env e1 in
+        Util.Environment.add env id t1;
+        let t2, constraints2 = type_expr counter env e2 in
+        Util.Environment.remove env id;
+        (t2, constraints1 @ constraints2)
+  | Fun (id, body, _) ->
+      let tUnivA = TUniv (Counter.get_fresh counter) in
+      let body_env = subenv env [ (id, tUnivA) ] in
+      let tbody, constraintsBody = type_expr counter body_env body in
+      Util.Environment.add env id tbody;
+      (TFunc ([], tUnivA, tbody), constraintsBody)
+  | Ignore (e1, e2, _) ->
+      let _, constraints1 = type_expr counter env e1
+      and t2, constraints2 = type_expr counter env e2 in
+      (t2, constraints1 @ constraints2)

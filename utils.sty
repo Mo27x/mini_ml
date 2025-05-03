@@ -1,0 +1,37 @@
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[french]{babel}
+
+\RequirePackage{graphicx}
+\RequirePackage{verbatim} % verbatiminput
+\RequirePackage[colorlinks=true, allcolors=blue]{hyperref} % blue links
+\RequirePackage{listings} % code insertion
+\RequirePackage{fancyhdr}
+\RequirePackage{titling}
+\RequirePackage{color}
+\RequirePackage{amssymb} % mathbb macro
+\RequirePackage{amsmath} % text macro in 'math mode'
+\RequirePackage{listings}
+\RequirePackage{caption}
+\RequirePackage{placeins} % macro \FloatBarrier (avoid figures goin' everywhere)
+\RequirePackage{xcolor}
+
+\newcommand{\setupplease}[2]{
+    \pagestyle{fancy}
+    \fancyhf{} % clear existing header/footer
+
+    \title{#1}
+    \author{#2}
+
+    \lhead{\leftmark}
+    \rhead{\thepage}
+
+    \makeatletter % start escaping chars like '@'
+    \AtBeginDocument{
+        \hypersetup{
+            pdftitle = {\@title},
+            pdfauthor = {\@author},
+        }
+    }
+    \makeatother % end escaping of chars like '@'
+}

@@ -11,7 +11,6 @@
 %left EQ NEQ LT GT LEQ GEQ
 %left ADD SUB
 %left MUL DIV MOD
-
 %left SEMICOLON
 
 %start <Ast.t> main
@@ -32,7 +31,7 @@ req:
     let rec build_fun args body =
       match args with
       | [] -> body
-      | a::rest -> App(Var("", Annotation.create $loc), Fun(a, build_fun rest body, Annotation.create $loc), Annotation.create $loc)
+      | a::rest -> Fun(a, build_fun rest body, Annotation.create $loc)
     in
     (false, name, build_fun args e)
 }
@@ -40,7 +39,7 @@ req:
     let rec build_fun args body =
       match args with
       | [] -> body
-      | a::rest -> App(Var("", Annotation.create $loc) ,Fun(a, build_fun rest body, Annotation.create $loc), Annotation.create $loc)
+      | a::rest -> Fun(a, build_fun rest body, Annotation.create $loc)
     in
     (true, name, build_fun args e)
 }
@@ -54,7 +53,7 @@ expr:
     let rec build_fun args body =
       match args with
       | [] -> body
-      | a::rest -> App(Var("", Annotation.create $loc), Fun(a, build_fun rest body, Annotation.create $loc), Annotation.create $loc)
+      | a::rest -> Fun(a, build_fun rest body, Annotation.create $loc)
     in
     Let(false, x, build_fun args e1, e2, Annotation.create $loc)
 }
@@ -62,33 +61,34 @@ expr:
     let rec build_fun args body =
       match args with
       | [] -> body
-      | a::rest -> App(Var("", Annotation.create $loc), Fun(a, build_fun rest body, Annotation.create $loc), Annotation.create $loc)
+      | a::rest -> Fun(a, build_fun rest body, Annotation.create $loc)
     in
     Let(true, x, build_fun args e1, e2, Annotation.create $loc)
 }
 | FUN x = ID ARROW e = expr { Fun(x, e, Annotation.create $loc) }
 | e1 = expr SEMICOLON e2 = expr { Ignore(e1, e2, Annotation.create $loc) }
-// | HEAD e = expr { App(Var("hd", Annotation.create $loc), e, Annotation.create $loc) }
-// | TAIL e = expr { App(Var("tl", Annotation.create $loc), e, Annotation.create $loc) }
-// | PRINT e = expr { App(Var("print", Annotation.create $loc), e, Annotation.create $loc) }
-// | NOT e = expr { App(Var("!", Annotation.create $loc), e, Annotation.create $loc) }
-| SUB e = expr { App(Var("neg", Annotation.create $loc), e, Annotation.create $loc) }
-| e1 = expr ADD e2 = expr { App(App(Var("(+)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr SUB e2 = expr { App(App(Var("(-)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr MUL e2 = expr { App(App(Var("(*)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr DIV e2 = expr { App(App(Var("(/)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr MOD e2 = expr { App(App(Var("(mod)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr AND e2 = expr { App(App(Var("(&&)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr OR e2 = expr { App(App(Var("(||)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr EQ e2 = expr { App(App(Var("(=)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr NEQ e2 = expr { App(App(Var("(<>)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr LT e2 = expr { App(App(Var("(<)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr GT e2 = expr { App(App(Var("(>)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr LEQ e2 = expr { App(App(Var("(<=)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr GEQ e2 = expr { App(App(Var("(>=)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr CONCAT e2 = expr { App(App(Var("(^)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr CAT e2 = expr { App(App(Var("(::)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr APPEND e2 = expr { App(App(Var("(@)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| SUB e = expr { App(Cst_func(UMin, Annotation.create $loc), e, Annotation.create $loc) }
+// | NOT e = expr { App(Cst_func(Not, Annotation.create $loc), e, Annotation.create $loc) }
+// | HEAD e = expr { App(Cst_func(Head, Annotation.create $loc), e, Annotation.create $loc) }
+// | TAIL e = expr { App(Cst_func(Tail, Annotation.create $loc), e, Annotation.create $loc) }
+// | PRINT e = expr { App(Cst_func(Print, Annotation.create $loc), e, Annotation.create $loc) }
+| e1 = app_expr e2 = simple_expr { App(e1, e2, Annotation.create $loc) }
+| e1 = expr ADD e2 = expr { App(App(Cst_func(Add, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr SUB e2 = expr { App(App(Cst_func(Sub, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr MUL e2 = expr { App(App(Cst_func(Mul, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr DIV e2 = expr { App(App(Cst_func(Div, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr MOD e2 = expr { App(App(Cst_func(Mod, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr AND e2 = expr { App(App(Cst_func(And, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr OR e2 = expr { App(App(Cst_func(Or, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr EQ e2 = expr { App(App(Cst_func(Eq, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr NEQ e2 = expr { App(App(Cst_func(Neq, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr LT e2 = expr { App(App(Cst_func(Lt, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr GT e2 = expr { App(App(Cst_func(Gt, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr LEQ e2 = expr { App(App(Cst_func(Leq, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr GEQ e2 = expr { App(App(Cst_func(Geq, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr CONCAT e2 = expr { App(App(Cst_func(Concat, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr CAT e2 = expr { App(App(Cst_func(Cat, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr APPEND e2 = expr { App(App(Cst_func(Append, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
 
 simple_expr:
 | i = INT { Cst_i(i, Annotation.create $loc) }
@@ -101,23 +101,24 @@ simple_expr:
 | L_PAR e = expr R_PAR { e }
 
 list_exprs:
-| e = simple_expr SEMICOLON es = list_exprs {
-    App(App(Var("(::)", Annotation.create $loc), e, Annotation.create $loc), es, Annotation.create $loc)
+| xs = non_empty_list_exprs { xs }
+| /* empty */ { Nil(Annotation.create $loc) }
+
+non_empty_list_exprs:
+| e = simple_expr xs = non_empty_list_exprs {
+    App(App(Var("(::)", Annotation.create $loc), e, Annotation.create $loc), xs, Annotation.create $loc)
 }
 | e = simple_expr {
-    App(App(Var("(::)", Annotation.create $loc), e, Annotation.create $loc), Var("[]", Annotation.create $loc), Annotation.create $loc)
+    App(App(Var("(::)", Annotation.create $loc), e, Annotation.create $loc), Nil(Annotation.create $loc), Annotation.create $loc)
 }
-| /* empty */ {
-    Var("[]", Annotation.create $loc)
-}
-
-app_expr:
-| f = simple_expr { f }
-| f = app_expr e = simple_expr { App(f,e,Annotation.create $loc)} 
 
 arguments:
 | x = ID xs = arguments { x :: xs }
 | x = ID { [x] }
+
+app_expr:
+| f = simple_expr { f }
+| f = app_expr e = simple_expr { App(f,e,Annotation.create $loc)} 
 
 %inline binop:
 | ADD   { Add }

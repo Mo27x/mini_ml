@@ -81,22 +81,25 @@ Typage.
 {}
 
 \question{
-  Quel est le choix fait par le parseur implémenté dans Parser calc.mly
+  Quel est le choix fait par le parseur implémenté dans Parser\_calc.mly
   sur votre séquence de tokens ?
 }
 {
-  L'abre est associatif à gauche.
+  \includegraphics[width=0.35\textwidth,height=\textheight,keepaspectratio]
+  {./assets/TTT_left.png} 
+  \\
+  Le parseur Parser\_calc prioritise l'opérateurs reduce dans ce cas, donc on l'arbre associatif à gauche.
 }
 {}
 
 
 \question{
   Quelles priorités peut-on ajouter à la grammaire ci-dessus pour retrouver
-  le comportement de Parser calc.mly (utilisez menhir pour vérifier que vous
+  le comportement de Parser\_calc.mly (utilisez menhir pour vérifier que vous
   avez la bonne réponse).
 }
 {
-  On peut ajouter "\%left T"
+  On peut ajouter ajouter à la grammaire la prioritée "\%left T" pour rendre la rendre associative à gauche.
 }
 {}
 
@@ -106,7 +109,7 @@ Typage.
   cela donne en terme du nombre de priorités à écrire.
 }
 {
-  On doit aussi mettre des priorités pour toutes les fonctions built\_in.
+  L'ajout des fonctions built\_in implique l'ajout des priorités pour ces fonctions.
 }
 {}
 
@@ -115,7 +118,7 @@ Typage.
   distincts dans ce cas plutôt que des priorités ?
 }
 {
-  Pour rendre la grammaire plus facile à comprendre et à maintenir.
+  L'utilisation de non-terminaux distincts permet de rendre la grammaire plus facile à comprendre et à maintenir.
 }
 {}
 

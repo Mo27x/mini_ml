@@ -19,6 +19,22 @@ req_list:
 req:
 | LET name = ID EQ e = expr { (false,name,e) }
 | LET REC name = ID EQ e = expr { (true,name,e) }
+| LET name = ID args = arguments EQ e = expr {
+    let rec build_fun args body =
+      match args with
+      | [] -> body
+      | a::rest -> Fun(a, build_fun rest body, Annotation.create $loc)
+    in
+    (false, name, build_fun args e)
+}
+| LET REC name = ID args = arguments EQ e = expr {
+    let rec build_fun args body =
+      match args with
+      | [] -> body
+      | a::rest -> Fun(a, build_fun rest body, Annotation.create $loc)
+    in
+    (true, name, build_fun args e)
+}
 
 expr:
 | e = simple_expr { e }
@@ -43,6 +59,10 @@ simple_expr:
 app_expr:
 | f = simple_expr { f }
 | f = app_expr e = simple_expr { App(f,e,Annotation.create $loc)} 
+
+arguments:
+| x = ID xs = arguments { x :: xs }
+| x = ID { [x] }
 
 %inline binop:
 | ADD   { Add }

@@ -124,15 +124,18 @@ Typage.
 
 \subsection{3.2 Syntaxe étendue}
 
-% > Vous expliquerez dans le document de réponses pour chaque point la solution
-% > que vous avez adopté pour le traiter, ainsi que les éventuelles difficultés
-% > rencontrées (i.e., qu'est-ce qui ne fonctionne pas correctement). Si vous
-% > n'arrivez pas à traiter un des points, fournissez un exemple de programme
-% > étant correctement parsé avec notre version et pas avec la vôtre.
+Vous expliquerez dans le document de réponses pour chaque point la solution
+que vous avez adopté pour le traiter, ainsi que les éventuelles difficultés
+rencontrées (i.e., qu'est-ce qui ne fonctionne pas correctement). Si vous
+n'arrivez pas à traiter un des points, fournissez un exemple de programme
+étant correctement parsé avec notre version et pas avec la vôtre.\\
 
-% > Evidemment, nous n'avons listé que les priorités des opérateurs. Vous
-% > expliquerez comment elles se comparent aux priorités déjà présentes dans le
-% > parseur simple et pourquoi c'est cette solution qui est la bonne.
+La syntaxe étendue est implémentée dans le fichier Parser.mly.\\
+Les opérateurs unaires head, tail et not sont absents, mais il y a du code commenté pour ces opérateurs, ce qui crée des conflits.\\
+
+Evidemment, nous n'avons listé que les priorités des opérateurs. Vous
+expliquerez comment elles se comparent aux priorités déjà présentes dans le
+parseur simple et pourquoi c'est cette solution qui est la bonne.
 
 \subsection{4.1 Typage naïf et génération des contraintes}
 

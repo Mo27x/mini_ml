@@ -1,13 +1,11 @@
 %{
     open Ast
 %}
-%left OR AND
-%left EQ NEQ LT GT LEQ GEQ
-%left CONCAT
-%left ADD SUB
-%left MUL DIV MOD
+
 %nonassoc IN ELSE ARROW
 %left SEMICOLON
+%left ADD SUB
+%left MUL DIV MOD
 
 %start <Ast.t> main
 
@@ -27,7 +25,7 @@ req:
     let rec build_fun args body =
       match args with
       | [] -> body
-      | a::rest -> Fun(a, build_fun rest body, Annotation.create $loc)
+      | a::rest -> App(Var("", Annotation.create $loc), Fun(a, build_fun rest body, Annotation.create $loc), Annotation.create $loc)
     in
     (false, name, build_fun args e)
 }
@@ -35,7 +33,7 @@ req:
     let rec build_fun args body =
       match args with
       | [] -> body
-      | a::rest -> Fun(a, build_fun rest body, Annotation.create $loc)
+      | a::rest -> App(Var("", Annotation.create $loc) ,Fun(a, build_fun rest body, Annotation.create $loc), Annotation.create $loc)
     in
     (true, name, build_fun args e)
 }
@@ -48,7 +46,6 @@ expr:
 | FUN x = ID ARROW e = expr { Fun(x,e,Annotation.create $loc) }
 | e1 = expr SEMICOLON e2 = expr { Ignore(e1,e2,Annotation.create $loc) }
 | e1 = app_expr e2 = simple_expr { App(e1,e2,Annotation.create $loc) } 
-// | e1 = app_expr op = binop e2 = simple_expr { App (App(Cst_func(op,Annotation.create $loc),e1,Annotation.create $loc),e2,Annotation.create $loc) }
 | e1 = expr ADD e2 = expr { App(App(Var("(+)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
 | e1 = expr SUB e2 = expr { App(App(Var("(-)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
 | e1 = expr MUL e2 = expr { App(App(Var("(*)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
@@ -57,14 +54,25 @@ expr:
 | SUB e = expr { App (Var("neg", Annotation.create $loc),e,Annotation.create $loc) }
 
 simple_expr:
-| i = INT { Cst_i(i,Annotation.create $loc) }
-| b = BOOL { Cst_b(b,Annotation.create $loc) }
-| s = STRING { Cst_str(s,Annotation.create $loc) }
-| f = built_in { Cst_func(f,Annotation.create $loc) }
-| L_PAR R_PAR { Unit(Annotation.create $loc)}
-| L_SQ R_SQ { Nil(Annotation.create $loc) }
-| x = ID { Var(x,Annotation.create $loc) }
+| i = INT { Cst_i(i, Annotation.create $loc) }
+| b = BOOL { Cst_b(b, Annotation.create $loc) }
+| s = STRING { Cst_str(s, Annotation.create $loc) }
+| f = built_in { Cst_func(f, Annotation.create $loc) }
+| L_PAR R_PAR { Unit(Annotation.create $loc) }
+| L_SQ elems = list_exprs R_SQ { elems }
+| x = ID { Var(x, Annotation.create $loc) }
 | L_PAR e = expr R_PAR { e }
+
+list_exprs:
+| e = simple_expr SEMICOLON es = list_exprs {
+    App(App(Var("(::)", Annotation.create $loc), e, Annotation.create $loc), es, Annotation.create $loc)
+}
+| e = simple_expr {
+    App(App(Var("(::)", Annotation.create $loc), e, Annotation.create $loc), Var("[]", Annotation.create $loc), Annotation.create $loc)
+}
+| /* empty */ {
+    Var("[]", Annotation.create $loc)
+}
 
 app_expr:
 | f = simple_expr { f }

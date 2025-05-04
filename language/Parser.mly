@@ -3,7 +3,6 @@
 %}
 
 %nonassoc IN ELSE ARROW
-%right CONS        /* :: */
 %right APPEND
 %left CAT CONCAT
 %left OR
@@ -11,7 +10,8 @@
 %left EQ NEQ LT GT LEQ GEQ
 %left ADD SUB
 %left MUL DIV MOD
-%right UMINUS /* pour - unaire */
+%right NOT HEAD TAIL PRINT /* added precedence for NOT, HEAD, TAIL, PRINT */
+
 %left SEMICOLON
 
 %start <Ast.t> main
@@ -47,12 +47,11 @@ req:
 
 expr:
 | e = simple_expr { e }
-| IF test = expr THEN th = expr ELSE el = expr { IfThenElse(test,th,el,Annotation.create $loc) }
-| LET x = ID EQ e1 = expr IN e2 = expr { Let(false,x, e1 ,e2,Annotation.create $loc) }
-| LET REC x = ID EQ e1 = expr IN e2 = expr { Let(true,x, e1 ,e2,Annotation.create $loc) }
-| FUN x = ID ARROW e = expr { Fun(x,e,Annotation.create $loc) }
-| e1 = expr SEMICOLON e2 = expr { Ignore(e1,e2,Annotation.create $loc) }
-| e1 = app_expr e2 = simple_expr { App(e1,e2,Annotation.create $loc) } 
+| HEAD e = expr { App(Var("hd", Annotation.create $loc), e, Annotation.create $loc) }
+| TAIL e = expr { App(Var("tl", Annotation.create $loc), e, Annotation.create $loc) }
+| PRINT e = expr { App(Var("print", Annotation.create $loc), e, Annotation.create $loc) }
+| NOT e = expr { App(Var("!", Annotation.create $loc), e, Annotation.create $loc) }
+| SUB e = expr { App(Var("neg", Annotation.create $loc), e, Annotation.create $loc) }
 | e1 = expr ADD e2 = expr { App(App(Var("(+)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
 | e1 = expr SUB e2 = expr { App(App(Var("(-)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
 | e1 = expr MUL e2 = expr { App(App(Var("(*)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
@@ -69,7 +68,6 @@ expr:
 | e1 = expr CONCAT e2 = expr { App(App(Var("(^)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
 | e1 = expr CAT e2 = expr { App(App(Var("(::)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
 | e1 = expr APPEND e2 = expr { App(App(Var("(@)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| SUB e = expr { App (Var("neg", Annotation.create $loc),e,Annotation.create $loc) }
 
 simple_expr:
 | i = INT { Cst_i(i, Annotation.create $loc) }

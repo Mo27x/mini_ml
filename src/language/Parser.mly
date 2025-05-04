@@ -73,22 +73,7 @@ expr:
 // | TAIL e = expr { App(Cst_func(Tail, Annotation.create $loc), e, Annotation.create $loc) }
 // | PRINT e = expr { App(Cst_func(Print, Annotation.create $loc), e, Annotation.create $loc) }
 | e1 = app_expr e2 = simple_expr { App(e1, e2, Annotation.create $loc) }
-| e1 = expr ADD e2 = expr { App(App(Cst_func(Add, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr SUB e2 = expr { App(App(Cst_func(Sub, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr MUL e2 = expr { App(App(Cst_func(Mul, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr DIV e2 = expr { App(App(Cst_func(Div, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr MOD e2 = expr { App(App(Cst_func(Mod, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr AND e2 = expr { App(App(Cst_func(And, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr OR e2 = expr { App(App(Cst_func(Or, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr EQ e2 = expr { App(App(Cst_func(Eq, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr NEQ e2 = expr { App(App(Cst_func(Neq, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr LT e2 = expr { App(App(Cst_func(Lt, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr GT e2 = expr { App(App(Cst_func(Gt, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr LEQ e2 = expr { App(App(Cst_func(Leq, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr GEQ e2 = expr { App(App(Cst_func(Geq, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr CONCAT e2 = expr { App(App(Cst_func(Concat, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr CAT e2 = expr { App(App(Cst_func(Cat, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
-| e1 = expr APPEND e2 = expr { App(App(Cst_func(Append, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr op = binop e2 = expr { App(App(Cst_func(op, Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
 
 simple_expr:
 | i = INT { Cst_i(i, Annotation.create $loc) }

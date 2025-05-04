@@ -130,8 +130,13 @@ rencontrées (i.e., qu'est-ce qui ne fonctionne pas correctement). Si vous
 n'arrivez pas à traiter un des points, fournissez un exemple de programme
 étant correctement parsé avec notre version et pas avec la vôtre.\\
 
-La syntaxe étendue est implémentée dans le fichier Parser.mly.\\
-Les opérateurs unaires head, tail et not sont absents, mais il y a du code commenté pour ces opérateurs, ce qui crée des conflits.\\
+\begin{itemize}
+\item La syntaxe étendue est implémentée dans le fichier Parser.mly.
+\item Les opérateurs unaires head, tail et not sont absents, mais il y a du code commenté pour ces opérateurs, ce qui crée des conflits.
+\item Les opérateurs binaires ont été factoriser, ce qui a permis de réduire le nombre de ligne de code.
+\item La notation du let avec arguments a été implémenté en prenant tous les arguments dans une liste récursivement.
+\item Les listes constantes sont implémentées en utilisant deux non-terminaux pour rendre la grammaire non ambigüe.\\
+\end{itemize}
 
 Evidemment, nous n'avons listé que les priorités des opérateurs. Vous
 expliquerez comment elles se comparent aux priorités déjà présentes dans le

@@ -35,3 +35,16 @@
     }
     \makeatother % end escaping of chars like '@'
 }
+
+\newcommand{\question}[3]{%
+  \fbox{\parbox{0.95\linewidth}{%
+    \textit{\textbf{Question: }}
+    \par{#1}
+    
+    % \ifstrempty{#2}{}{\textbf{Reponse: } #2\par}
+    \ifstrempty{#2}{}{\textit{\textbf{Réponse: }}\par{#2}}
+
+    \ifstrempty{#3}{}{\textbf{Remarque: } \par{#3}}
+  }}
+  
+}

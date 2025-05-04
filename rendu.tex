@@ -7,19 +7,6 @@
 \setlength{\fboxrule}{0.1pt}
 \usepackage{etoolbox}
 
-\newcommand{\question}[3]{%
-  \fbox{\parbox{0.95\linewidth}{%
-    \textit{\textbf{Question: }}
-    \par{#1}
-    
-    % \ifstrempty{#2}{}{\textbf{Reponse: } #2\par}
-    \ifstrempty{#2}{}{\textit{\\\textbf{Réponse: }}\par{#2}}
-
-    \ifstrempty{#3}{}{\\\textbf{Difficultés: } #3\par}
-  }}
-  \\\\
-}
-
 \usepackage{./utils}
 \setcounter{secnumdepth}{0}
 \setupplease{Rendu projet de compilation:\\interpreteur mini-ml}
@@ -38,7 +25,7 @@
 % \newpage
 
 \section{Auteurs du projet et répartition du travail}
-Mouhamed s'est occupé principalement de la partie parseur et Nathan de la partie
+Mouhamed s'est occupé principalement de la partie Parsing et Nathan de la partie
 Typage.
 
 \pagebreak
@@ -141,20 +128,28 @@ Typage.
 
 \subsection{4.1 Typage naïf et génération des contraintes}
 
-% > **[DONE?]**
 \question{
   Implémentez la fonction type\_of\_built\_in du fichier typer util.ml 
   (attention à correctement attribuer les types universels génériques).
 }
-{}
+{
+  L'implémentation est dans le fichier typer\_util.ml.\\
+}
 {}
 
 % > **[DONE?]**
 \question{
   Implémentez la fonction type\_expr du fichier typer naive.ml.
 }
-{}
-{}
+{
+  L'implémentation est dans le fichier typer\_naive.ml.\\
+}
+{
+  Les built\_in 'Leq' et 'Geq' sont de type 'a -> 'a -> bool. 
+  Sachant que les built\_in pour les
+  opération arithmetiques marche que sur des int, c'est surprenant que ces deux 
+  là ne suivent pas la même logique.
+}
 
 \question{
   Donnez 3 (ou plus) petits programmes mini-ml qui illustrent le fonctionnement
@@ -179,7 +174,11 @@ Typage.
   programmes ou l'un des nôtres, décrivez cette différence, et expliquez d'où
   vous pensez qu'elle vient.
 }
-{}
+{
+  Notre typeur n'assigne les contraintes dans le même ordre. Ça ne 
+  devrais pas engendrer de problèmes lors de la résolution cependant. toutes les
+  contraintes sont bien là, juste pas dans le même ordre.
+}
 {}
 
 \subsection{4.2 Résolution des contraintes et polymorphisme faible}
@@ -195,7 +194,25 @@ Typage.
   Observez que l'exemple donné en début de chapitre n'est pas typé. Donnez les
   parties typées, et expliquez où se situe l'erreur.
 }
-{}
+{
+  On a:\\
+  f : 'b -> 'b  , constraints : []\\
+  a : 'e        , constraints : [,'b -> 'b = 'd -> 'e,'d = int]\\
+  b : 'h        , constraints : [,'b -> 'b = 'g -> 'h,'g = string]\\
+
+  - Donc avec le typeur naif:\\
+  Les contraintes de a font que 'b doit être de type int et celles de b font que
+  'b doit être de type string. On ne peut pas être à la fois de type int et
+  string, donc le typeur renvoie une erreur (l'erreur apparait lors du typage de b).
+
+  - Mais avec le typeur fortement polymorphe:\\
+  Il n'y a pas d'erreur (on a f: 'a -> 'a, a: int, b: string)\\
+  La résolution des contraintes a pu se faire correctement parce que f est 
+  instancié une fois pour chaque let (c'est le premier "•" de la partie 4.3).
+  Dans le "let a" f est instancié puis devient int -> int et dans le "let b" f est 
+  encore instancié et devient string -> string.
+
+}
 {}
 
 \question{

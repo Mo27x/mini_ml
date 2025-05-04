@@ -1,7 +1,11 @@
 %{
     open Ast
 %}
-
+%left OR AND
+%left EQ NEQ LT GT LEQ GEQ
+%left CONCAT
+%left ADD SUB
+%left MUL DIV MOD
 %nonassoc IN ELSE ARROW
 %left SEMICOLON
 
@@ -44,8 +48,13 @@ expr:
 | FUN x = ID ARROW e = expr { Fun(x,e,Annotation.create $loc) }
 | e1 = expr SEMICOLON e2 = expr { Ignore(e1,e2,Annotation.create $loc) }
 | e1 = app_expr e2 = simple_expr { App(e1,e2,Annotation.create $loc) } 
-| e1 = app_expr op = binop e2 = simple_expr { App (App(Cst_func(op,Annotation.create $loc),e1,Annotation.create $loc),e2,Annotation.create $loc) }
-| SUB e = simple_expr { App (Cst_func(UMin,Annotation.create $loc),e,Annotation.create $loc) }
+// | e1 = app_expr op = binop e2 = simple_expr { App (App(Cst_func(op,Annotation.create $loc),e1,Annotation.create $loc),e2,Annotation.create $loc) }
+| e1 = expr ADD e2 = expr { App(App(Var("(+)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr SUB e2 = expr { App(App(Var("(-)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr MUL e2 = expr { App(App(Var("(*)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr DIV e2 = expr { App(App(Var("(/)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| e1 = expr MOD e2 = expr { App(App(Var("(mod)", Annotation.create $loc), e1, Annotation.create $loc), e2, Annotation.create $loc) }
+| SUB e = expr { App (Var("neg", Annotation.create $loc),e,Annotation.create $loc) }
 
 simple_expr:
 | i = INT { Cst_i(i,Annotation.create $loc) }

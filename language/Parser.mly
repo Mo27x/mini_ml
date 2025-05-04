@@ -45,6 +45,7 @@ expr:
 | e1 = expr SEMICOLON e2 = expr { Ignore(e1,e2,Annotation.create $loc) }
 | e1 = app_expr e2 = simple_expr { App(e1,e2,Annotation.create $loc) } 
 | e1 = app_expr op = binop e2 = simple_expr { App (App(Cst_func(op,Annotation.create $loc),e1,Annotation.create $loc),e2,Annotation.create $loc) }
+| SUB e = simple_expr { App (Cst_func(UMin,Annotation.create $loc),e,Annotation.create $loc) }
 
 simple_expr:
 | i = INT { Cst_i(i,Annotation.create $loc) }

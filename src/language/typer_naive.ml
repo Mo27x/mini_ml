@@ -8,33 +8,32 @@ let subenv (env : 'a Util.Environment.t) (added_vals : (string * 'a) list) =
 
 let rec type_expr (counter : Counter.t) (env : type_lang Util.Environment.t)
     (expr : expr) =
-  (* la suite est à modifier -- c’est juste là pour ne pas avoir de warning tant que vous ne travaillez pas dessus.*)
   match expr with
-  | Cst_i (_,annot) -> 
-    Annotation.set_type annot TInt;
-    (TInt, [])
-  | Cst_b (_,annot) -> 
-    Annotation.set_type annot TBool;
-    (TBool, [])
-  | Cst_str (_,annot) -> 
-    Annotation.set_type annot TString;
-    (TString, [])
-  | Cst_func (f, annot) -> 
-    Annotation.set_type annot (type_of_built_in f);
-    (type_of_built_in f, [])
-  | Nil annot -> 
-    let t = TList ([], TUniv (Counter.get_fresh counter)) in
-    Annotation.set_type annot t;
-    (t, [])
-  | Unit annot -> 
-    Annotation.set_type annot TUnit;
-    (TUnit, [])
+  | Cst_i (_, annot) ->
+      Annotation.set_type annot TInt;
+      (TInt, [])
+  | Cst_b (_, annot) ->
+      Annotation.set_type annot TBool;
+      (TBool, [])
+  | Cst_str (_, annot) ->
+      Annotation.set_type annot TString;
+      (TString, [])
+  | Cst_func (f, annot) ->
+      Annotation.set_type annot (type_of_built_in f);
+      (type_of_built_in f, [])
+  | Nil annot ->
+      let t = TList ([], TUniv (Counter.get_fresh counter)) in
+      Annotation.set_type annot t;
+      (t, [])
+  | Unit annot ->
+      Annotation.set_type annot TUnit;
+      (TUnit, [])
   | Var (id, annot) -> (
       match Util.Environment.get env id with
-      | Some t -> 
-        Annotation.set_type annot t;
-        (t, [])
-      | None -> failwith ("Undefined var id: " ^ id))
+      | Some t ->
+          Annotation.set_type annot t;
+          (t, [])
+      | None -> failwith ("Undefined var: " ^ id))
   | IfThenElse (e1, e2, e3, annot) ->
       let t1, constraints1 = type_expr counter env e1
       and t2, constraints2 = type_expr counter env e2
@@ -82,5 +81,5 @@ let rec type_expr (counter : Counter.t) (env : type_lang Util.Environment.t)
   | Ignore (e1, e2, annot) ->
       let _, constraints1 = type_expr counter env e1
       and t2, constraints2 = type_expr counter env e2 in
-        Annotation.set_type annot t2;
-        (t2, constraints1 @ constraints2)
+      Annotation.set_type annot t2;
+      (t2, constraints1 @ constraints2)

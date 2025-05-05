@@ -24,9 +24,15 @@
 
 % \newpage
 
-\section{Auteurs du projet et répartition du travail}
+\begin{center}
+  -----------------------------------
+\end{center}
+
 Mouhamed s'est occupé principalement de la partie Parsing et Nathan de la partie
-Typage.
+Typage.\\
+
+Notre parseur semble renvoyer l'exception "Language.Parser.MenhirBasics.Error" pour certains programmes valides mais nous n'avons pas trouvé d'où vient l'erreur\dots
+
 
 \pagebreak
 
@@ -131,11 +137,11 @@ n'arrivez pas à traiter un des points, fournissez un exemple de programme
 étant correctement parsé avec notre version et pas avec la vôtre.\\
 
 \begin{itemize}
-\item La syntaxe étendue est implémentée dans le fichier Parser.mly.
-\item Les opérateurs unaires head, tail et not sont absents, mais il y a du code commenté pour ces opérateurs, ce qui crée des conflits.
-\item Les opérateurs binaires ont été factoriser, ce qui a permis de réduire le nombre de ligne de code.
-\item La notation du let avec arguments a été implémenté en prenant tous les arguments dans une liste récursivement.
-\item Les listes constantes sont implémentées en utilisant deux non-terminaux pour rendre la grammaire non ambigüe.\\
+  \item La syntaxe étendue est implémentée dans le fichier Parser.mly.
+  \item Les opérateurs unaires head, tail et not sont absents, mais il y a du code commenté pour ces opérateurs, ce qui crée des conflits.
+  \item Les opérateurs binaires ont été factoriser, ce qui a permis de réduire le nombre de ligne de code.
+  \item La notation du let avec arguments a été implémenté en prenant tous les arguments dans une liste récursivement.
+  \item Les listes constantes sont implémentées en utilisant deux non-terminaux pour rendre la grammaire non ambigüe.\\
 \end{itemize}
 
 Evidemment, nous n'avons listé que les priorités des opérateurs. Vous
@@ -158,7 +164,7 @@ parseur simple et pourquoi c'est cette solution qui est la bonne.
   Implémentez la fonction type\_expr du fichier typer naive.ml.
 }
 {
-  L'implémentation est dans le fichier typer\_naive.ml.\\
+  L'implémentation est dans le fichier typer\_naive.ml.
 }
 {
   Les built\_in 'Leq' et 'Geq' sont de type 'a -> 'a -> bool. 
@@ -173,7 +179,21 @@ parseur simple et pourquoi c'est cette solution qui est la bonne.
   Vous placerez ces programmes dans examples/answers, et expliquerez ce qu'ils
   illustrent (en commentaire de ces programmes, et dans votre rapport).
 }
-{}
+{
+  - Exemple 1 (answers/4\_1\_min.mml):\\
+    Ce programme contient une fonction 'min' qui calcul le minimum entre deux 
+    variables (quelque soit leurs types) et un 'main' qui montre comment utiliser
+    cette fonction avec des nombre ou des chaines de caractères
+    (l'opérateur '<=' est de type 'a -> 'a -> bool).\\
+  - Exemple 2 (answers/4\_1\_wrongType.mml):\\
+    Ce programme met en avant le fait que le typeur peux detecter des erreurs de
+    typage en utilisant l'exemple d'une variable qui n'est pas de type TBool comme
+    condition d'une expression IfThenElse.\\
+  - Exemple 3 (answers/4\_1\_fizzbuzz.mml):\\
+    Ce programme affiche les chaines de caractères "fizz", "buzz" ou "fizzbuzz" 
+    après la valeur de nombres définis dans un tableau.
+
+}
 {}
 
 \question{
@@ -182,8 +202,15 @@ parseur simple et pourquoi c'est cette solution qui est la bonne.
   type et dites quelles contraintes ce nœud introduit (évidemment, choisissez un
   exemples où il y a des contraintes).
 }
-{}
-{}
+{
+  \includegraphics[width=0.95\textwidth,height=\textheight,keepaspectratio]
+  {./assets/4_1_contraintes.png} 
+}
+{
+  On a laissé les 'a, 'b,... pour mettre en avant à quoi correspond chaque contrainte mais dans les contraintes du IfThenElse sont bien [int = bool, bool = bool] par exemple.\\
+  (Au passage, on voit bien l'erreur de typage: "int=bool" est absurde)
+
+}
 
 \question{
   Si vous avez une différence entre votre typeur et le nôtre sur l'un de vos
@@ -203,7 +230,15 @@ parseur simple et pourquoi c'est cette solution qui est la bonne.
   Dans les exemples de la question précédente, lesquels sont typés correctement,
   lesquels ne le sont pas ? Expliquez pourquoi.
 }
-{}
+{
+  - Exemple 1 (answers/4\_1\_min.mml):\\
+  Toutes les contraintes sont respectées, le programme est donc correctement typé.\\
+  - Exemple 2 (answers/4\_1\_wrongType.mml):\\
+  Le programme n'est donc pas correctement typé car au moins une des contraintes n'est pas respecté. Comme expliqué dans les réponses précédentes, c'est celle induite par la condition du IfThenElse.\\
+  - Exemple 3 (answers/4\_1\_fizzbuzz.mml):\\
+  Le programme est donc correctement typé.\\
+
+}
 {}
 
 \question{
@@ -235,7 +270,12 @@ parseur simple et pourquoi c'est cette solution qui est la bonne.
   Proposez un autre programme qui n'est pas correctement typé alors que OCaml le
   type, et expliquez pourquoi. Vous le placerez dans examples/answers.
 }
-{}
+{
+  Nous n'avons pas eu d'idées de programmes qui peuvent être parsé mais pas typé
+  par nos typeurs (sans reprendre un exemple comme la question précédente avec le typeur naif).\\
+  Le programme dans le fichier '4\_2\_invalidInMiniMl.mml' montre un programme valide
+  en OCaml mais pas en Mini-ml.
+}
 {}
 
 \subsection{4.3 Typage fortement polymorphe}
@@ -248,7 +288,11 @@ parseur simple et pourquoi c'est cette solution qui est la bonne.
   placerez dans examples/answers.
 }
 {}
-{}
+{
+  Le typage fortement polymorphe n'est pas finis.\\
+  Les fonctions 'instantiate' et 'type\_expr' devraient être fonctionelles
+  cependant.
+}
 
 \question{
   Si vous avez des différence entre votre implémentation et le comportement de

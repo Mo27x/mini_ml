@@ -1,0 +1,12 @@
+(*
+  This program shows that our typers catch some typing errors
+  (the type of the variables, not writting mistakes obviously)
+
+  In this case the error is that the constant 1 of type TInt is used as a 
+  condition in an 'if ... then ... else' expression which adds a constraint 
+  on it which can't be satisfied. 
+  (a TInt can't be a TBool, we're not writting mini-c !)
+
+*)
+
+let main = if 1 then true else false

@@ -1,0 +1,19 @@
+(*
+    This program contains function (min) that takes two arguments of any type
+    and returns the minimum.
+
+    The main show the usage of this function with two different types.
+
+    Note:
+    - This program will not work with the 'weak' typer: the reason is the same
+      as for the answer in the PDF's part 4.2
+*)
+
+let min a b = 
+    if a <= b then a 
+    else b
+
+let main = 
+    let miniStr = min "a" "b" in
+    let miniInt = min 1 2 in
+    ()

@@ -1,0 +1,26 @@
+(* 
+    Fizzbuzz program, 
+    prints "fizz", "buzz" or both after each value of the array defined line 19
+    
+*)
+
+let fizzbuzz n =
+    (if ((n % 3) = 0) then "fizz" else "") ^
+    (if ((n % 5) = 0) then "buzz" else "")
+
+let rec iter f l = 
+    if (l = []) then 
+        ()
+    else 
+        f (hd l);
+        iter f (tl l)
+
+let main = 
+    let values = [1;2;3;15;2025] in
+    iter 
+        (fun n ->
+            print n;
+            print (" : " ^ (fizzbuzz n) ^ "\n")
+        )
+        values
+    
